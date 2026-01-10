@@ -63,9 +63,8 @@ func GetLink(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Add(`Content-Type`, `text/plain`)
+	w.Header().Add(`Location`, result)
 	w.WriteHeader(http.StatusTemporaryRedirect)
-	w.Write([]byte(result))
-
 }
 
 func CreateShortLink(originalLink string) string {
