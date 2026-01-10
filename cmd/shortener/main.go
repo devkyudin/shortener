@@ -27,7 +27,7 @@ func run() error {
 	mux := http.NewServeMux()
 	mux.HandleFunc(`/`, Shorten)
 	mux.HandleFunc(`/{id}`, GetLink)
-	return http.ListenAndServe(`:8080`, mux)
+	return http.ListenAndServe(`localhost:8080`, mux)
 }
 
 func Shorten(w http.ResponseWriter, r *http.Request) {
@@ -55,8 +55,8 @@ func GetLink(w http.ResponseWriter, r *http.Request) {
 	}
 
 	id := r.PathValue(`id`)
-	result, error := GetFullLink(id)
-	if error != nil {
+	result, err := GetFullLink(id)
+	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -74,9 +74,9 @@ func CreateShortLink(originalLink string) string {
 }
 
 func GetFullLink(codedID string) (string, error) {
-	id, error := StringToID(codedID)
-	if error != nil {
-		return "", error
+	id, err := StringToID(codedID)
+	if err != nil {
+		return "", err
 	}
 
 	fullLink, ok := m[id]
