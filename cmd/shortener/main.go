@@ -11,8 +11,8 @@ import (
 
 var m map[int]string = make(map[int]string)
 var hostAddress string = `localhost:8080/`
-var initialShortLinkId = 10_000_000
-var newShortLinkId = initialShortLinkId
+var initialShortLinkID = 10_000_000
+var newShortLinkID = initialShortLinkID
 var mutex sync.Mutex
 var shortLinkAlphabet []rune = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
 var alphabetMap map[rune]int
@@ -68,28 +68,28 @@ func GetLink(w http.ResponseWriter, r *http.Request) {
 }
 
 func CreateShortLink(originalLink string) string {
-	id := GetNewId()
+	id := GetNewID()
 	m[id] = originalLink
-	shortedLink := hostAddress + IdToString(id)
+	shortedLink := hostAddress + IDToString(id)
 	return shortedLink
 }
 
-func GetFullLink(codedId string) (string, error) {
-	id, error := StringToId(codedId)
+func GetFullLink(codedID string) (string, error) {
+	id, error := StringToID(codedID)
 	if error != nil {
 		return "", error
 	}
 
 	fullLink, ok := m[id]
 	if !ok {
-		return "", errors.New(fmt.Sprint(`Нет ссылки с идентификатором '%s'`, codedId))
+		return "", errors.New(fmt.Sprint(`Нет ссылки с идентификатором '%s'`, codedID))
 	}
 
 	return fullLink, nil
 }
 
-func IdToString(id int) string {
-	var result string = ""
+func IDToString(id int) string {
+	var result = ""
 	alphabetLength := len(shortLinkAlphabet)
 	for id > 0 {
 		code := id % alphabetLength
@@ -100,17 +100,17 @@ func IdToString(id int) string {
 	return Reverse(result)
 }
 
-func StringToId(src string) (int, error) {
+func StringToID(src string) (int, error) {
 	result := 0
 	alphabetLength := len(shortLinkAlphabet)
 	reversed := Reverse(src)
 	runes := []rune(reversed)
 	for i := 0; i < len(src); i++ {
-		runeId, ok := alphabetMap[runes[i]]
+		runeID, ok := alphabetMap[runes[i]]
 		if !ok {
 			return 0, errors.New(fmt.Sprint(`В кодировке нет символа '%s'`, runes[i]))
 		}
-		result += runeId * IntPow(alphabetLength, i)
+		result += runeID * IntPow(alphabetLength, i)
 	}
 
 	return result, nil
@@ -142,11 +142,11 @@ func CreateMap() map[rune]int {
 	return result
 }
 
-func GetNewId() int {
+func GetNewID() int {
 	mutex.Lock()
 	defer mutex.Unlock()
-	result := newShortLinkId
-	newShortLinkId++
+	result := newShortLinkID
+	newShortLinkID++
 	return result
 }
 
