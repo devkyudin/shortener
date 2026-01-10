@@ -44,8 +44,8 @@ func Shorten(w http.ResponseWriter, r *http.Request) {
 
 	shortedLink := CreateShortLink(string(originalLink))
 	w.Header().Add(`Content-Type`, `text/plain`)
-	_, _ = w.Write([]byte(shortedLink))
 	w.WriteHeader(http.StatusCreated)
+	_, _ = w.Write([]byte(shortedLink))
 }
 
 func GetLink(w http.ResponseWriter, r *http.Request) {
