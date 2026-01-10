@@ -8,8 +8,8 @@ import (
 	"unicode/utf8"
 )
 
-var m map[int]string = make(map[int]string)
-var hostAddress string = `localhost:8080/`
+var m = make(map[int]string)
+var hostAddress = `http://localhost:8080/`
 var initialShortLinkID = 10_000_000
 var newShortLinkID = initialShortLinkID
 var mutex sync.Mutex
