@@ -81,7 +81,7 @@ func GetFullLink(codedID string) (string, error) {
 
 	fullLink, ok := m[id]
 	if !ok {
-		return "", errors.New(`Нет ссылки с таким идентификатором идентификатором`)
+		return "", errors.New(`нет ссылки с таким идентификатором идентификатором`)
 	}
 
 	return fullLink, nil
@@ -107,7 +107,7 @@ func StringToID(src string) (int, error) {
 	for i := 0; i < len(src); i++ {
 		runeID, ok := alphabetMap[runes[i]]
 		if !ok {
-			return 0, errors.New(`Битая ссылка`)
+			return 0, errors.New(`битая ссылка`)
 		}
 		result += runeID * IntPow(alphabetLength, i)
 	}
