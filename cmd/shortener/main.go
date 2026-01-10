@@ -27,7 +27,7 @@ func run() error {
 	mux := http.NewServeMux()
 	mux.HandleFunc(`/`, Shorten)
 	mux.HandleFunc(`/{id}`, GetLink)
-	return http.ListenAndServe(`localhost:8080`, mux)
+	return http.ListenAndServe(`:8080`, mux)
 }
 
 func Shorten(w http.ResponseWriter, r *http.Request) {
