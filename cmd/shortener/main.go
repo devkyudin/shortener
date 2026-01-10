@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"fmt"
 	"io"
 	"net/http"
 	"sync"
@@ -82,7 +81,7 @@ func GetFullLink(codedID string) (string, error) {
 
 	fullLink, ok := m[id]
 	if !ok {
-		return "", errors.New(fmt.Sprint(`Нет ссылки с идентификатором '%s'`, codedID))
+		return "", errors.New(`Нет ссылки с таким идентификатором идентификатором`)
 	}
 
 	return fullLink, nil
@@ -108,7 +107,7 @@ func StringToID(src string) (int, error) {
 	for i := 0; i < len(src); i++ {
 		runeID, ok := alphabetMap[runes[i]]
 		if !ok {
-			return 0, errors.New(fmt.Sprint(`В кодировке нет символа '%s'`, runes[i]))
+			return 0, errors.New(`Битая ссылка`)
 		}
 		result += runeID * IntPow(alphabetLength, i)
 	}
