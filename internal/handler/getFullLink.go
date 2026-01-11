@@ -1,0 +1,25 @@
+package handler
+
+import (
+	"net/http"
+
+	"github.com/devkyudin/shortener/internal/service"
+)
+
+func GetLink(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	id := r.PathValue(`id`)
+	result, err := service.GetFullLink(id)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	w.Header().Add(`Content-Type`, `text/plain`)
+	w.Header().Add(`Location`, result)
+	w.WriteHeader(http.StatusTemporaryRedirect)
+}
