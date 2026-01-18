@@ -5,11 +5,12 @@ import (
 	"sync"
 	"unicode/utf8"
 
+	"github.com/devkyudin/shortener/internal/config"
 	"github.com/devkyudin/shortener/internal/repository"
 )
 
 var newShortLinkID = initialShortLinkID
-var hostAddress = `http://localhost:8080/`
+var hostAddress = config.FlagDefaultAddress
 var initialShortLinkID = 10_000_000
 var mutex sync.Mutex
 var shortLinkAlphabet = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
