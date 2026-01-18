@@ -8,7 +8,7 @@ func CreateShortLink(originalLink string, id int) {
 	linksIds[originalLink] = id
 }
 
-func GetById(id int) (link string, isOk bool) {
+func GetByID(id int) (link string, isOk bool) {
 	result, isOk := idsLinks[id]
 	return result, isOk
 }

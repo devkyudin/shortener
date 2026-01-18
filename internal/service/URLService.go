@@ -110,7 +110,7 @@ func GetFullLink(codedID string) (string, error) {
 		return "", err
 	}
 
-	fullLink, ok := repository.GetById(id)
+	fullLink, ok := repository.GetByID(id)
 	if !ok {
 		return "", errors.New(`нет ссылки с таким идентификатором идентификатором`)
 	}
