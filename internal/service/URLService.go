@@ -4,9 +4,10 @@ import (
 	"errors"
 	"sync"
 	"unicode/utf8"
+
+	"github.com/devkyudin/shortener/internal/repository"
 )
 
-var m = make(map[int]string)
 var newShortLinkID = initialShortLinkID
 var hostAddress = `http://localhost:8080/`
 var initialShortLinkID = 10_000_000
@@ -15,15 +16,22 @@ var shortLinkAlphabet = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUV
 var alphabetMap map[rune]int
 
 func CreateShortLink(originalLink string) string {
+	mutex.Lock()
+	defer mutex.Unlock()
+	_, isOk := repository.GetByLink(originalLink)
+	if isOk {
+		// Если ссылка уже есть, возвращаем существующую короткую ссылку
+		id, _ := repository.GetByLink(originalLink)
+		return hostAddress + IDToString(id)
+	}
+
 	id := GetNewID()
-	m[id] = originalLink
+	repository.CreateShortLink(originalLink, id)
 	shortedLink := hostAddress + IDToString(id)
 	return shortedLink
 }
 
 func GetNewID() int {
-	mutex.Lock()
-	defer mutex.Unlock()
 	result := newShortLinkID
 	newShortLinkID++
 	return result
@@ -102,7 +110,7 @@ func GetFullLink(codedID string) (string, error) {
 		return "", err
 	}
 
-	fullLink, ok := m[id]
+	fullLink, ok := repository.GetById(id)
 	if !ok {
 		return "", errors.New(`нет ссылки с таким идентификатором идентификатором`)
 	}

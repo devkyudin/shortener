@@ -13,6 +13,11 @@ func GetLink(w http.ResponseWriter, r *http.Request) {
 	}
 
 	id := r.PathValue(`id`)
+	if id == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
 	result, err := service.GetFullLink(id)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
