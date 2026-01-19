@@ -5,7 +5,6 @@ import (
 
 	"github.com/devkyudin/shortener/internal/config"
 	"github.com/devkyudin/shortener/internal/handler"
-	"github.com/go-chi/chi/v5"
 )
 
 func main() {
@@ -16,12 +15,5 @@ func main() {
 }
 
 func run() error {
-	return http.ListenAndServe(config.FlagRunAddress, Router())
-}
-
-func Router() chi.Router {
-	r := chi.NewRouter()
-	r.HandleFunc(`/`, handler.Shorten)
-	r.HandleFunc(`/{id}`, handler.GetLink)
-	return r
+	return http.ListenAndServe(`:8080`, handler.ShortenerRouter())
 }

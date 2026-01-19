@@ -7,11 +7,6 @@ import (
 )
 
 func GetLink(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
 	id := r.PathValue(`id`)
 	if id == "" {
 		w.WriteHeader(http.StatusBadRequest)

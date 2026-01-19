@@ -8,10 +8,6 @@ import (
 )
 
 func Shorten(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost || r.Header.Get(`Content-Type`) != `text/plain` {
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
 
 	originalLink, err := io.ReadAll(r.Body)
 	if err != nil || string(originalLink) == "" {
