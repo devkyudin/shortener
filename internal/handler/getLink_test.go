@@ -70,6 +70,7 @@ func TestGetLink(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			res, body := testRequest(t, httptest.NewServer(ShortenerRouter()), tt.req)
+			defer res.Body.Close()
 			assert.Equal(t, tt.want.status, res.StatusCode)
 			assert.Equal(t, tt.want.contentType, res.Header.Get("Content-Type"))
 			assert.Equal(t, tt.want.location, res.Header.Get("Location"))

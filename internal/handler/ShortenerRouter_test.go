@@ -140,6 +140,7 @@ func TestShortenerRouter(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			resp, get := testRequest(t, httptest.NewServer(ShortenerRouter()), tt.req)
+			defer resp.Body.Close()
 			assert.Equal(t, tt.want.status, resp.StatusCode)
 			assert.Equal(t, tt.want.body, get)
 		})

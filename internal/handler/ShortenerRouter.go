@@ -15,7 +15,6 @@ func ShortenerRouter() chi.Router {
 
 	r.With(
 		middleware.RequireMethod("GET"),
-		middleware.RequireContentType("text/plain"),
 	).HandleFunc(`/{id}`, GetLink)
 	return r
 }
