@@ -42,8 +42,16 @@ func (addr *NetAddress) Set(rawAddr string) error {
 }
 
 var Cfg = Config{
-	ServerRunAddress:   &NetAddress{},
-	FlagDefaultAddress: &NetAddress{},
+	ServerRunAddress: &NetAddress{
+		Host:     "localhost",
+		Port:     "8080",
+		Protocol: "http",
+	},
+	FlagDefaultAddress: &NetAddress{
+		Host:     "localhost",
+		Port:     "8080",
+		Protocol: "http",
+	},
 }
 
 type Config struct {
