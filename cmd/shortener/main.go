@@ -15,5 +15,5 @@ func main() {
 }
 
 func run() error {
-	return http.ListenAndServe(config.Cfg.ServerRunAddress.String(), handler.ShortenerRouter())
+	return http.ListenAndServe(config.Cfg.ServerRunAddress.Host+":"+config.Cfg.ServerRunAddress.Port, handler.ShortenerRouter())
 }
