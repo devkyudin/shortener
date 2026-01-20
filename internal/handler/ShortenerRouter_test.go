@@ -9,7 +9,7 @@ import (
 	"testing"
 
 	"github.com/devkyudin/shortener/internal/service"
-	"github.com/devkyudin/shortener/internal/testUtils"
+	"github.com/devkyudin/shortener/internal/testutils"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -29,7 +29,7 @@ type want struct {
 }
 
 func TestMain(m *testing.M) {
-	testUtils.SetupTestEnvironment()
+	testutils.SetupTestEnvironment()
 	code := m.Run()
 	os.Exit(code)
 }
