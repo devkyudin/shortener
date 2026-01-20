@@ -10,7 +10,6 @@ import (
 )
 
 var newShortLinkID = initialShortLinkID
-var hostAddress = config.FlagDefaultAddress
 var initialShortLinkID = 10_000_000
 var mutex sync.Mutex
 var shortLinkAlphabet = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
@@ -23,12 +22,12 @@ func CreateShortLink(originalLink string) string {
 	if isOk {
 		// Если ссылка уже есть, возвращаем существующую короткую ссылку
 		id, _ := repository.GetByLink(originalLink)
-		return hostAddress + IDToString(id)
+		return config.FlagDefaultAddress + IDToString(id)
 	}
 
 	id := GetNewID()
 	repository.CreateShortLink(originalLink, id)
-	shortedLink := hostAddress + IDToString(id)
+	shortedLink := config.FlagDefaultAddress + IDToString(id)
 	return shortedLink
 }
 

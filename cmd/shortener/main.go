@@ -15,5 +15,5 @@ func main() {
 }
 
 func run() error {
-	return http.ListenAndServe(`:8080`, handler.ShortenerRouter())
+	return http.ListenAndServe(config.FlagRunAddress, handler.ShortenerRouter())
 }

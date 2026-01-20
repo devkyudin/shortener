@@ -4,10 +4,12 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"strings"
 	"testing"
 
 	"github.com/devkyudin/shortener/internal/service"
+	"github.com/devkyudin/shortener/internal/testUtils"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -24,6 +26,12 @@ type want struct {
 	body        string
 	contentType string
 	location    string
+}
+
+func TestMain(m *testing.M) {
+	testUtils.SetupTestEnvironment()
+	code := m.Run()
+	os.Exit(code)
 }
 
 func TestShortenerRouter(t *testing.T) {
