@@ -22,12 +22,12 @@ func CreateShortLink(originalLink string) string {
 	if isOk {
 		// Если ссылка уже есть, возвращаем существующую короткую ссылку
 		id, _ := repository.GetByLink(originalLink)
-		return config.FlagDefaultAddress + IDToString(id)
+		return config.Cfg.FlagDefaultAddress.String() + IDToString(id)
 	}
 
 	id := GetNewID()
 	repository.CreateShortLink(originalLink, id)
-	shortedLink := config.FlagDefaultAddress + IDToString(id)
+	shortedLink := config.Cfg.FlagDefaultAddress.String() + IDToString(id)
 	return shortedLink
 }
 
