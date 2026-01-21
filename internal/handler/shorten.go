@@ -19,5 +19,9 @@ func Shorten(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Add(`Content-Type`, `text/plain`)
 	w.WriteHeader(http.StatusCreated)
-	_, _ = w.Write([]byte(shortedLink))
+	_, err = w.Write([]byte(shortedLink))
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 }
