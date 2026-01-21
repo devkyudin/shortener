@@ -148,12 +148,7 @@ func TestShortenerRouter(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			resp, get := testRequest(t, httptest.NewServer(ShortenerRouter()), tt.req)
-			defer func(Body io.ReadCloser) {
-				err := Body.Close()
-				if err != nil {
-					t.Errorf("Failed to close response body: %v", err)
-				}
-			}(resp.Body)
+			defer resp.Body.Close()
 			assert.Equal(t, tt.want.status, resp.StatusCode)
 			assert.Equal(t, tt.want.body, get)
 		})
