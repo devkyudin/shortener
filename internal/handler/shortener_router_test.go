@@ -168,12 +168,7 @@ func testRequest(t *testing.T, ts *httptest.Server, req req) (*http.Response, st
 	r.Header.Set("Content-Type", req.contentType)
 	res, err := ts.Client().Do(r)
 	require.NoError(t, err)
-	defer func(Body io.ReadCloser) {
-		err := Body.Close()
-		if err != nil {
-			t.Errorf("failed to close response body: %v", err)
-		}
-	}(res.Body)
+	defer res.Body.Close()
 	resp, err := io.ReadAll(res.Body)
 	require.NoError(t, err)
 	return res, string(resp)
