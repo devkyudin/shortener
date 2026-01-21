@@ -75,7 +75,7 @@ func TestShortenerRouter(t *testing.T) {
 				body:        "https://example.com",
 			},
 			want: want{
-				status: 400,
+				status: 405,
 				body:   "",
 			},
 		},
@@ -101,7 +101,7 @@ func TestShortenerRouter(t *testing.T) {
 				body:        "",
 			},
 			want: want{
-				status: 400,
+				status: 405,
 				body:   "",
 			},
 		},
@@ -127,7 +127,7 @@ func TestShortenerRouter(t *testing.T) {
 				body:        "",
 			},
 			want: want{
-				status: 400,
+				status: 405,
 				body:   "",
 			},
 		},
@@ -148,7 +148,12 @@ func TestShortenerRouter(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			resp, get := testRequest(t, httptest.NewServer(ShortenerRouter()), tt.req)
-			defer resp.Body.Close()
+			defer func(Body io.ReadCloser) {
+				err := Body.Close()
+				if err != nil {
+					t.Errorf("Failed to close response body: %v", err)
+				}
+			}(resp.Body)
 			assert.Equal(t, tt.want.status, resp.StatusCode)
 			assert.Equal(t, tt.want.body, get)
 		})
@@ -163,7 +168,12 @@ func testRequest(t *testing.T, ts *httptest.Server, req req) (*http.Response, st
 	r.Header.Set("Content-Type", req.contentType)
 	res, err := ts.Client().Do(r)
 	require.NoError(t, err)
-	defer res.Body.Close()
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			t.Errorf("failed to close response body: %v", err)
+		}
+	}(res.Body)
 	resp, err := io.ReadAll(res.Body)
 	require.NoError(t, err)
 	return res, string(resp)

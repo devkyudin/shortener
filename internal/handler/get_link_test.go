@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -38,7 +39,7 @@ func TestGetLink(t *testing.T) {
 				contentType: "text/plain",
 			},
 			want: want{
-				status: http.StatusBadRequest,
+				status: http.StatusMethodNotAllowed,
 			},
 		},
 		{
@@ -49,7 +50,7 @@ func TestGetLink(t *testing.T) {
 				contentType: "text/plain",
 			},
 			want: want{
-				status: http.StatusBadRequest,
+				status: http.StatusMethodNotAllowed,
 			},
 		},
 		{
@@ -70,7 +71,12 @@ func TestGetLink(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			res, body := testRequest(t, httptest.NewServer(ShortenerRouter()), tt.req)
-			defer res.Body.Close()
+			defer func(Body io.ReadCloser) {
+				err := Body.Close()
+				if err != nil {
+					t.Errorf("failed to close response body: %v", err)
+				}
+			}(res.Body)
 			assert.Equal(t, tt.want.status, res.StatusCode)
 			assert.Equal(t, tt.want.contentType, res.Header.Get("Content-Type"))
 			assert.Equal(t, tt.want.location, res.Header.Get("Location"))

@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"errors"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -9,12 +9,6 @@ import (
 	"github.com/devkyudin/shortener/internal/service"
 	"github.com/stretchr/testify/assert"
 )
-
-type errReader struct{}
-
-func (errReader) Read([]byte) (int, error) {
-	return 0, errors.New("read error")
-}
 
 func TestShorten(t *testing.T) {
 	type testCase struct {
@@ -47,7 +41,7 @@ func TestShorten(t *testing.T) {
 				body:        "https://example.com",
 			},
 			want: want{
-				status: http.StatusBadRequest,
+				status: http.StatusMethodNotAllowed,
 				body:   "",
 			},
 		},
@@ -82,7 +76,12 @@ func TestShorten(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			res, body := testRequest(t, httptest.NewServer(ShortenerRouter()), tt.req)
-			defer res.Body.Close()
+			defer func(Body io.ReadCloser) {
+				err := Body.Close()
+				if err != nil {
+
+				}
+			}(res.Body)
 			assert.Equal(t, tt.want.status, res.StatusCode)
 			assert.Equal(t, tt.want.contentType, res.Header.Get("Content-Type"))
 			assert.Equal(t, tt.want.body, body)
