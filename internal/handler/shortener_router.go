@@ -10,7 +10,6 @@ func ShortenerRouter() chi.Router {
 	r.With(
 		middleware.RequireMethod("POST"),
 		middleware.RequireContentType("text/plain"),
-		middleware.RequireNonEmptyBody(),
 	).HandleFunc("/", Shorten)
 
 	r.With(
