@@ -19,7 +19,7 @@ func TestShortenerRouter(t *testing.T) {
 		{
 			name: "Shorten: Bad request empty body",
 			req: testutils.Req{
-				Url:         "/",
+				URL:         "/",
 				MethodName:  "POST",
 				ContentType: "text/plain",
 				Body:        "",
@@ -32,7 +32,7 @@ func TestShortenerRouter(t *testing.T) {
 		{
 			name: "Shorten: Bad request wrong content type",
 			req: testutils.Req{
-				Url:         "/",
+				URL:         "/",
 				MethodName:  "POST",
 				ContentType: "application/json",
 				Body:        "https://example.com",
@@ -45,7 +45,7 @@ func TestShortenerRouter(t *testing.T) {
 		{
 			name: "Shorten: Bad request wrong method",
 			req: testutils.Req{
-				Url:         "/",
+				URL:         "/",
 				MethodName:  "GET",
 				ContentType: "text/plain",
 				Body:        "https://example.com",
@@ -58,7 +58,7 @@ func TestShortenerRouter(t *testing.T) {
 		{
 			name: "Shorten: Created short link",
 			req: testutils.Req{
-				Url:         "/",
+				URL:         "/",
 				MethodName:  "POST",
 				ContentType: "text/plain",
 				Body:        "https://example.com",
@@ -71,7 +71,7 @@ func TestShortenerRouter(t *testing.T) {
 		{
 			name: "GetLink: Bad request missing id",
 			req: testutils.Req{
-				Url:         "/",
+				URL:         "/",
 				MethodName:  "GET",
 				ContentType: "text/plain",
 				Body:        "",
@@ -84,7 +84,7 @@ func TestShortenerRouter(t *testing.T) {
 		{
 			name: "GetLink: Bad request unknown id",
 			req: testutils.Req{
-				Url:         "/unknown-id",
+				URL:         "/unknown-id",
 				MethodName:  "GET",
 				ContentType: "text/plain",
 				Body:        "",
@@ -97,7 +97,7 @@ func TestShortenerRouter(t *testing.T) {
 		{
 			name: "GetLink: Bad request wrong method",
 			req: testutils.Req{
-				Url:         "/some-id",
+				URL:         "/some-id",
 				MethodName:  "POST",
 				ContentType: "text/plain",
 				Body:        "",
@@ -110,7 +110,7 @@ func TestShortenerRouter(t *testing.T) {
 		{
 			name: "GetLink: Temporary redirect for existing id",
 			req: testutils.Req{
-				Url:         "/" + deps.URLService.CreateShortLink("https://example.com")[len("http://localhost:8080/"):],
+				URL:         "/" + deps.URLService.CreateShortLink("https://example.com")[len("http://localhost:8080/"):],
 				MethodName:  "GET",
 				ContentType: "text/plain",
 				Body:        "",

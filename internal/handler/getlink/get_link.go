@@ -1,4 +1,4 @@
-package get_link
+package getlink
 
 import (
 	"net/http"

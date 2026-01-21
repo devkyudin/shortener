@@ -22,7 +22,7 @@ func TestShorten(t *testing.T) {
 		{
 			name: "returns 201 and short link for valid POST text/plain",
 			req: testutils.Req{
-				Url:         "/",
+				URL:         "/",
 				MethodName:  "POST",
 				ContentType: "text/plain",
 				Body:        "https://example.com",
@@ -36,7 +36,7 @@ func TestShorten(t *testing.T) {
 		{
 			name: "returns 400 for non-POST method",
 			req: testutils.Req{
-				Url:         "/",
+				URL:         "/",
 				MethodName:  "GET",
 				ContentType: "text/plain",
 				Body:        "https://example.com",
@@ -49,7 +49,7 @@ func TestShorten(t *testing.T) {
 		{
 			name: "returns 400 for wrong content type",
 			req: testutils.Req{
-				Url:         "/",
+				URL:         "/",
 				MethodName:  "POST",
 				ContentType: "application/json",
 				Body:        "https://example.com",
@@ -62,7 +62,7 @@ func TestShorten(t *testing.T) {
 		{
 			name: "returns 400 for empty body",
 			req: testutils.Req{
-				Url:         "/",
+				URL:         "/",
 				MethodName:  "POST",
 				ContentType: "text/plain",
 				Body:        "",

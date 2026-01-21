@@ -11,7 +11,7 @@ import (
 )
 
 type Req struct {
-	Url         string
+	URL         string
 	MethodName  string
 	ContentType string
 	Body        string
@@ -26,7 +26,7 @@ type Want struct {
 
 func TestRequest(t *testing.T, ts *httptest.Server, req Req) (*http.Response, string) {
 	reader := io.NopCloser(io.Reader(strings.NewReader(req.Body)))
-	r, err := http.NewRequest(req.MethodName, ts.URL+req.Url, reader)
+	r, err := http.NewRequest(req.MethodName, ts.URL+req.URL, reader)
 	require.NoError(t, err)
 
 	r.Header.Set("Content-Type", req.ContentType)

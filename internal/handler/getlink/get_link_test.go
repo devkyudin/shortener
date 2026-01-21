@@ -1,4 +1,4 @@
-package get_link_test
+package getlink_test
 
 import (
 	"net/http"
@@ -22,7 +22,7 @@ func TestGetLink(t *testing.T) {
 		{
 			name: "returns 307 and Location for existing id",
 			req: testutils.Req{
-				Url:         "/" + deps.URLService.CreateShortLink("https://example.com")[len("http://localhost:8080/"):],
+				URL:         "/" + deps.URLService.CreateShortLink("https://example.com")[len("http://localhost:8080/"):],
 				MethodName:  "GET",
 				ContentType: "text/plain",
 			},
@@ -35,7 +35,7 @@ func TestGetLink(t *testing.T) {
 		{
 			name: "returns 400 for non-GET method",
 			req: testutils.Req{
-				Url:         "/" + deps.URLService.CreateShortLink("https://example.com")[len("http://localhost:8080/"):],
+				URL:         "/" + deps.URLService.CreateShortLink("https://example.com")[len("http://localhost:8080/"):],
 				MethodName:  "POST",
 				ContentType: "text/plain",
 			},
@@ -46,7 +46,7 @@ func TestGetLink(t *testing.T) {
 		{
 			name: "returns 400 for missing id",
 			req: testutils.Req{
-				Url:         "/",
+				URL:         "/",
 				MethodName:  "GET",
 				ContentType: "text/plain",
 			},
@@ -57,7 +57,7 @@ func TestGetLink(t *testing.T) {
 		{
 			name: "returns 400 for unknown id",
 			req: testutils.Req{
-				Url:         "/unknown-id",
+				URL:         "/unknown-id",
 				MethodName:  "GET",
 				ContentType: "text/plain",
 			},
