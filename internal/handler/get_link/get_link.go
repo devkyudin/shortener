@@ -1,4 +1,4 @@
-package handler
+package get_link
 
 import (
 	"net/http"
@@ -6,14 +6,22 @@ import (
 	"github.com/devkyudin/shortener/internal/service"
 )
 
-func GetLink(w http.ResponseWriter, r *http.Request) {
+type GetLinkHandler struct {
+	s *service.URLService
+}
+
+func NewGetLinkHandler(s *service.URLService) *GetLinkHandler {
+	return &GetLinkHandler{s: s}
+}
+
+func (h *GetLinkHandler) GetLink(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue(`id`)
 	if id == "" {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	result, err := service.GetFullLink(id)
+	result, err := h.s.GetFullLink(id)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return

@@ -9,35 +9,44 @@ import (
 	"github.com/devkyudin/shortener/internal/repository"
 )
 
+type URLService struct {
+	lr  *repository.LinksRepository
+	cfg *config.Config
+}
+
+func NewURLService(lr *repository.LinksRepository, cfg *config.Config) *URLService {
+	return &URLService{lr, cfg}
+}
+
 var newShortLinkID = initialShortLinkID
 var initialShortLinkID = 10_000_000
 var mutex sync.Mutex
 var shortLinkAlphabet = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
 var alphabetMap map[rune]int
 
-func CreateShortLink(originalLink string) string {
+func (s *URLService) CreateShortLink(originalLink string) string {
 	mutex.Lock()
 	defer mutex.Unlock()
-	_, isOk := repository.GetByLink(originalLink)
+	_, isOk := s.lr.GetByLink(originalLink)
 	if isOk {
 		// Если ссылка уже есть, возвращаем существующую короткую ссылку
-		id, _ := repository.GetByLink(originalLink)
-		return config.Cfg.FlagDefaultAddress.String() + IDToString(id)
+		id, _ := s.lr.GetByLink(originalLink)
+		return s.cfg.ShortLinkAddress.String() + toString(id)
 	}
 
-	id := GetNewID()
-	repository.CreateShortLink(originalLink, id)
-	shortedLink := config.Cfg.FlagDefaultAddress.String() + IDToString(id)
+	id := getNewID()
+	s.lr.CreateShortLink(originalLink, id)
+	shortedLink := s.cfg.ShortLinkAddress.String() + toString(id)
 	return shortedLink
 }
 
-func GetNewID() int {
+func getNewID() int {
 	result := newShortLinkID
 	newShortLinkID++
 	return result
 }
 
-func IDToString(id int) string {
+func toString(id int) string {
 	var result = ""
 	alphabetLength := len(shortLinkAlphabet)
 	for id > 0 {
@@ -46,29 +55,29 @@ func IDToString(id int) string {
 		id = id / alphabetLength
 	}
 
-	return Reverse(result)
+	return reverse(result)
 }
 
-func StringToID(src string) (int, error) {
+func stringToID(src string) (int, error) {
 	if alphabetMap == nil {
-		alphabetMap = CreateMap()
+		alphabetMap = createMap()
 	}
 	result := 0
 	alphabetLength := len(shortLinkAlphabet)
-	reversed := Reverse(src)
+	reversed := reverse(src)
 	runes := []rune(reversed)
 	for i := 0; i < len(src); i++ {
 		runeID, ok := alphabetMap[runes[i]]
 		if !ok {
 			return 0, errors.New(`битая ссылка`)
 		}
-		result += runeID * IntPow(alphabetLength, i)
+		result += runeID * intPow(alphabetLength, i)
 	}
 
 	return result, nil
 }
 
-func CreateMap() map[rune]int {
+func createMap() map[rune]int {
 	result := make(map[rune]int, len(shortLinkAlphabet))
 	for i := 0; i < len(shortLinkAlphabet); i++ {
 		result[shortLinkAlphabet[i]] = i
@@ -77,7 +86,7 @@ func CreateMap() map[rune]int {
 	return result
 }
 
-func IntPow(n, m int) int {
+func intPow(n, m int) int {
 	if m == 0 {
 		return 1
 	}
@@ -93,7 +102,7 @@ func IntPow(n, m int) int {
 	return result
 }
 
-func Reverse(s string) string {
+func reverse(s string) string {
 	size := len(s)
 	buf := make([]byte, size)
 	for start := 0; start < size; {
@@ -104,13 +113,13 @@ func Reverse(s string) string {
 	return string(buf)
 }
 
-func GetFullLink(codedID string) (string, error) {
-	id, err := StringToID(codedID)
+func (s *URLService) GetFullLink(codedID string) (string, error) {
+	id, err := stringToID(codedID)
 	if err != nil {
 		return "", err
 	}
 
-	fullLink, ok := repository.GetByID(id)
+	fullLink, ok := s.lr.GetByID(id)
 	if !ok {
 		return "", errors.New(`нет ссылки с таким идентификатором идентификатором`)
 	}

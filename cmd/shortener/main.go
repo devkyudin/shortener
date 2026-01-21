@@ -3,17 +3,17 @@ package main
 import (
 	"net/http"
 
-	"github.com/devkyudin/shortener/internal/config"
-	"github.com/devkyudin/shortener/internal/handler"
+	"github.com/devkyudin/shortener/internal/dependencies"
 )
 
 func main() {
-	config.ParseFlags()
 	if err := run(); err != nil {
 		panic(err)
 	}
 }
 
 func run() error {
-	return http.ListenAndServe(config.Cfg.ServerRunAddress.Host+":"+config.Cfg.ServerRunAddress.Port, handler.ShortenerRouter())
+	deps := dependencies.GetDependencies()
+	serverAddress := deps.Config.ServerRunAddress.Host + ":" + deps.Config.ServerRunAddress.Port
+	return http.ListenAndServe(serverAddress, deps.Router)
 }
