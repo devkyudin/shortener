@@ -13,7 +13,7 @@ type URLService struct {
 	lr           *repository.LinksRepository
 	cfg          *config.Config
 	nextID       int
-	mutex        sync.Mutex
+	mutex        *sync.Mutex
 	linkAlphabet []rune
 	alphabetMap  map[rune]int
 }
@@ -25,7 +25,7 @@ func NewURLService(lr *repository.LinksRepository, cfg *config.Config) *URLServi
 		lr:           lr,
 		cfg:          cfg,
 		nextID:       10_000_000,
-		mutex:        sync.Mutex{},
+		mutex:        &sync.Mutex{},
 		linkAlphabet: linkAlphabet,
 		alphabetMap:  alphabetMap,
 	}
