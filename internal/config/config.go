@@ -6,8 +6,6 @@ import (
 	"net/url"
 	"os"
 	"strings"
-
-	"github.com/joho/godotenv"
 )
 
 type Config struct {
@@ -67,14 +65,15 @@ var cfg = &Config{
 }
 
 func GetConfig() *Config {
-	if err := godotenv.Load(); err == nil {
-		host, _ := os.LookupEnv("SHORTLINK_HTTP_URL")
-		port, _ := os.LookupEnv("SHORTLINK_HTTP_PORT")
-		cfg.ServerRunAddress.Host = host
-		cfg.ServerRunAddress.Port = port
+	setConfigByFlags()
+
+	if serverAddress := os.Getenv("SERVER_ADDRESS"); serverAddress != "" {
+		_ = cfg.ServerRunAddress.Set(serverAddress)
 	}
 
-	setConfigByFlags()
+	if shortLinkAddress := os.Getenv("BASE_URL"); shortLinkAddress != "" {
+		_ = cfg.ShortLinkAddress.Set(shortLinkAddress)
+	}
 	return cfg
 }
 
