@@ -1,4 +1,4 @@
-package shorten_test
+package shortenplaintext_test
 
 import (
 	"net/http"

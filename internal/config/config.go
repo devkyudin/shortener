@@ -14,7 +14,7 @@ type Config struct {
 }
 
 type NetAddress struct {
-	Protocol string
+	Protocol string `json:"protocol"  bson:"protocol" json:"brotocol, omitempty"`
 	Host     string
 	Port     string
 }

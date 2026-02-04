@@ -3,7 +3,8 @@ package dependencies
 import (
 	"github.com/devkyudin/shortener/internal/config"
 	"github.com/devkyudin/shortener/internal/handler/getlink"
-	"github.com/devkyudin/shortener/internal/handler/shorten"
+	"github.com/devkyudin/shortener/internal/handler/shortenjson"
+	"github.com/devkyudin/shortener/internal/handler/shortenplaintext"
 	"github.com/devkyudin/shortener/internal/logger"
 	"github.com/devkyudin/shortener/internal/middleware"
 	"github.com/devkyudin/shortener/internal/repository"
@@ -13,13 +14,14 @@ import (
 )
 
 type Dependencies struct {
-	LinksRepository repository.LinksRepository
-	Config          config.Config
-	URLService      service.URLService
-	GetLinkHandler  getlink.GetLinkHandler
-	ShortenHandler  shorten.ShortenHandler
-	Router          chi.Router
-	LogContainer    logger.Container
+	LinksRepository         repository.LinksRepository
+	Config                  config.Config
+	URLService              service.URLService
+	GetLinkHandler          getlink.GetLinkHandler
+	ShortenPlainTextHandler shortenplaintext.ShortenPlainTextHandler
+	ShortenJSONHandler      shortenjson.ShortenJSONHandler
+	Router                  chi.Router
+	LogContainer            logger.Container
 }
 
 func GetDependencies() *Dependencies {
@@ -27,17 +29,19 @@ func GetDependencies() *Dependencies {
 	lr := repository.NewLinksRepository()
 	s := service.NewURLService(lr, cfg)
 	glh := getlink.NewGetLinkHandler(s)
-	sh := shorten.NewShortenHandler(s)
+	shp := shortenplaintext.NewShortenPlainTextHandler(s)
+	shj := shortenjson.NewShortenJSONHandler(s)
 	logContainer := logger.NewLoggerContainer()
 	lm := middleware.NewLoggingMiddleware(logContainer)
-	router := shortener_router2.GetRouter(sh, glh, lm)
+	router := shortener_router2.GetRouter(shp, shj, glh, lm)
 	return &Dependencies{
-		LinksRepository: *lr,
-		Config:          *cfg,
-		URLService:      *s,
-		GetLinkHandler:  *glh,
-		ShortenHandler:  *sh,
-		Router:          router,
-		LogContainer:    *logContainer,
+		LinksRepository:         *lr,
+		Config:                  *cfg,
+		URLService:              *s,
+		GetLinkHandler:          *glh,
+		ShortenPlainTextHandler: *shp,
+		ShortenJSONHandler:      *shj,
+		Router:                  router,
+		LogContainer:            *logContainer,
 	}
 }

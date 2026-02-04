@@ -1,4 +1,4 @@
-package shorten
+package shortenplaintext
 
 import (
 	"io"
@@ -7,15 +7,15 @@ import (
 	"github.com/devkyudin/shortener/internal/service"
 )
 
-type ShortenHandler struct {
+type ShortenPlainTextHandler struct {
 	s *service.URLService
 }
 
-func NewShortenHandler(s *service.URLService) *ShortenHandler {
-	return &ShortenHandler{s: s}
+func NewShortenPlainTextHandler(s *service.URLService) *ShortenPlainTextHandler {
+	return &ShortenPlainTextHandler{s: s}
 }
 
-func (h *ShortenHandler) Shorten(w http.ResponseWriter, r *http.Request) {
+func (h *ShortenPlainTextHandler) Shorten(w http.ResponseWriter, r *http.Request) {
 
 	originalLink, err := io.ReadAll(r.Body)
 	if err != nil || string(originalLink) == "" {
