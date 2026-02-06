@@ -33,7 +33,8 @@ func GetDependencies() *Dependencies {
 	shj := shortenjson.NewShortenJSONHandler(s)
 	logContainer := logger.NewLoggerContainer()
 	lm := middleware.NewLoggingMiddleware(logContainer)
-	router := shortener_router2.GetRouter(shp, shj, glh, lm)
+	ch := middleware.NewCompressionMiddleware(logContainer, map[string]struct{}{"text/plain": {}, "application/json": {}})
+	router := shortener_router2.GetRouter(shp, shj, glh, lm, ch)
 	return &Dependencies{
 		LinksRepository:         *lr,
 		Config:                  *cfg,
