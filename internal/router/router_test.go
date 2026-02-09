@@ -52,7 +52,7 @@ func TestShortenerRouter(t *testing.T) {
 			},
 			want: testutils.Want{
 				Status: 201,
-				Body:   `{"result":"` + deps.URLService.CreateShortLink("https://example.com") + `"}` + "\n",
+				Body:   `{"result":"` + deps.URLService.CreateShortLink("https://some-new-example.com") + `"}` + "\n",
 			},
 		},
 		{

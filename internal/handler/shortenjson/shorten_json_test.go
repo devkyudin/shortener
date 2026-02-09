@@ -31,7 +31,7 @@ func TestShorten(t *testing.T) {
 			},
 			want: testutils.Want{
 				Status:      http.StatusCreated,
-				Body:        `{"result":"` + deps.URLService.CreateShortLink("https://example.com") + `"}` + "\n",
+				Body:        `{"result":"` + deps.URLService.CreateShortLink("https://some-new-example.com") + `"}` + "\n",
 				ContentType: "application/json",
 			},
 		},
