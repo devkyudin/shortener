@@ -12,7 +12,7 @@ type CodedLink struct {
 	OriginalURL string `json:"original_url"`
 }
 
-func NewCodedLink(id int, originalUrl string, alphabet *Alphabet) *CodedLink {
+func NewCodedLink(id int, originalURL string, alphabet *Alphabet) *CodedLink {
 	var result = ""
 	originalID := id
 	alphabetLength := len(alphabet.Chars)
@@ -22,12 +22,12 @@ func NewCodedLink(id int, originalUrl string, alphabet *Alphabet) *CodedLink {
 		id = id / alphabetLength
 	}
 
-	shortUrl := reverse(result)
+	shortURL := reverse(result)
 
 	return &CodedLink{
 		UUID:        originalID,
-		ShortURL:    shortUrl,
-		OriginalURL: originalUrl,
+		ShortURL:    shortURL,
+		OriginalURL: originalURL,
 	}
 }
 
