@@ -88,6 +88,6 @@ func GetConfig() *Config {
 func setConfigByFlags() {
 	flag.Var(cfg.ServerRunAddress, "a", "address to run the server on in format ip:port")
 	flag.Var(cfg.ShortLinkAddress, "b", "default address for short links in format http(s)://ip:port/")
-	flag.StringVar(cfg.FileStoragePath, "f", "", "path to file for storing data")
+	flag.StringVar(cfg.FileStoragePath, "f", defaultFileStoragePath, "path to file for storing data")
 	flag.Parse()
 }

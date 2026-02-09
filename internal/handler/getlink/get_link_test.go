@@ -22,7 +22,7 @@ func TestGetLink(t *testing.T) {
 		{
 			name: "returns 307 and Location for existing id",
 			req: testutils.Req{
-				URL:         "/" + deps.URLService.CreateShortLink("https://example.com")[len("http://localhost:8080/"):],
+				URL:         "/" + testutils.CreateShortLinkSafe(deps.URLService, "https://example.com")[len("http://localhost:8080/"):],
 				MethodName:  "GET",
 				ContentType: "text/plain",
 			},
@@ -35,7 +35,7 @@ func TestGetLink(t *testing.T) {
 		{
 			name: "returns 400 for non-GET method",
 			req: testutils.Req{
-				URL:         "/" + deps.URLService.CreateShortLink("https://example.com")[len("http://localhost:8080/"):],
+				URL:         "/" + testutils.CreateShortLinkSafe(deps.URLService, "https://example.com")[len("http://localhost:8080/"):],
 				MethodName:  "POST",
 				ContentType: "text/plain",
 			},
@@ -67,11 +67,11 @@ func TestGetLink(t *testing.T) {
 		},
 	}
 
-	ts := httptest.NewServer(deps.Router)
+	ts := httptest.NewServer(*deps.Router)
 	defer ts.Close()
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			res, body := testutils.TestRequest(t, httptest.NewServer(deps.Router), tt.req)
+			res, body := testutils.TestRequest(t, httptest.NewServer(*deps.Router), tt.req)
 			defer res.Body.Close()
 			assert.Equal(t, tt.want.Status, res.StatusCode)
 			assert.Equal(t, tt.want.ContentType, res.Header.Get("Content-Type"))

@@ -15,36 +15,40 @@ import (
 )
 
 type Dependencies struct {
-	LinksRepository         repository.CodedLinksRepository
-	Config                  config.Config
-	URLService              service.URLService
-	GetLinkHandler          getlink.GetLinkHandler
-	ShortenPlainTextHandler shortenplaintext.ShortenPlainTextHandler
-	ShortenJSONHandler      shortenjson.ShortenJSONHandler
-	Router                  chi.Router
-	LogContainer            logger.Container
+	LinksRepository         *repository.CodedLinksRepository
+	Config                  *config.Config
+	URLService              *service.URLService
+	GetLinkHandler          *getlink.GetLinkHandler
+	ShortenPlainTextHandler *shortenplaintext.ShortenPlainTextHandler
+	ShortenJSONHandler      *shortenjson.ShortenJSONHandler
+	Router                  *chi.Router
+	LogContainer            *logger.Container
 }
 
 func GetDependencies() *Dependencies {
 	cfg := config.GetConfig()
+	logContainer := logger.NewLoggerContainer()
 	alphabet := model.NewAlphabet([]rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"))
-	linksRepository := repository.NewLinksRepository()
+	linksRepository, err := repository.NewCodedLinksRepository(cfg)
+	if err != nil {
+		logContainer.Logger.Error("ошибка при инициализации репозитория", "err", err)
+		panic(err)
+	}
 	urlService := service.NewURLService(alphabet, linksRepository, cfg)
 	getLinkHandler := getlink.NewGetLinkHandler(urlService)
 	shortenPlainTextHandler := shortenplaintext.NewShortenPlainTextHandler(urlService)
 	shortenJSONHandler := shortenjson.NewShortenJSONHandler(urlService)
-	logContainer := logger.NewLoggerContainer()
 	loggingMiddleware := middleware.NewLoggingMiddleware(logContainer)
 	compressionMiddleware := middleware.NewCompressionMiddleware(logContainer, map[string]struct{}{"text/plain": {}, "application/json": {}})
 	router := shortener_router2.GetRouter(shortenPlainTextHandler, shortenJSONHandler, getLinkHandler, loggingMiddleware, compressionMiddleware)
 	return &Dependencies{
-		LinksRepository:         *linksRepository,
-		Config:                  *cfg,
-		URLService:              *urlService,
-		GetLinkHandler:          *getLinkHandler,
-		ShortenPlainTextHandler: *shortenPlainTextHandler,
-		ShortenJSONHandler:      *shortenJSONHandler,
+		LinksRepository:         linksRepository,
+		Config:                  cfg,
+		URLService:              urlService,
+		GetLinkHandler:          getLinkHandler,
+		ShortenPlainTextHandler: shortenPlainTextHandler,
+		ShortenJSONHandler:      shortenJSONHandler,
 		Router:                  router,
-		LogContainer:            *logContainer,
+		LogContainer:            logContainer,
 	}
 }

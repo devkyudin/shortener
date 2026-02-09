@@ -15,5 +15,5 @@ func main() {
 func run() error {
 	deps := dependencies.GetDependencies()
 	serverAddress := deps.Config.ServerRunAddress.Host + ":" + deps.Config.ServerRunAddress.Port
-	return http.ListenAndServe(serverAddress, deps.Router)
+	return http.ListenAndServe(serverAddress, *deps.Router)
 }

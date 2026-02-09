@@ -23,7 +23,11 @@ func (h *ShortenPlainTextHandler) Shorten(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	shortedLink := h.s.CreateShortLink(string(originalLink))
+	shortedLink, err := h.s.CreateShortLink(string(originalLink))
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 
 	w.Header().Add(`Content-Type`, `text/plain`)
 	w.WriteHeader(http.StatusCreated)

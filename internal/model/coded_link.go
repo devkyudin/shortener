@@ -1,6 +1,10 @@
 package model
 
-import "unicode/utf8"
+import (
+	"encoding/json"
+	"fmt"
+	"unicode/utf8"
+)
 
 type CodedLink struct {
 	UUID        int    `json:"uuid"`
@@ -8,8 +12,9 @@ type CodedLink struct {
 	OriginalUrl string `json:"original_url"`
 }
 
-func NewCodedLink(id int, originalUrl string, alphabet *Alphabet) CodedLink {
+func NewCodedLink(id int, originalUrl string, alphabet *Alphabet) *CodedLink {
 	var result = ""
+	originalID := id
 	alphabetLength := len(alphabet.Chars)
 	for id > 0 {
 		code := id % alphabetLength
@@ -19,12 +24,27 @@ func NewCodedLink(id int, originalUrl string, alphabet *Alphabet) CodedLink {
 
 	shortUrl := reverse(result)
 
-	return CodedLink{
-		UUID:        id,
+	return &CodedLink{
+		UUID:        originalID,
 		ShortUrl:    shortUrl,
 		OriginalUrl: originalUrl,
 	}
 }
+
+func FromJSON(link string) (*CodedLink, error) {
+	result := CodedLink{}
+	err := json.Unmarshal([]byte(link), &result)
+	if err != nil {
+		return nil, fmt.Errorf("не удалось распарсить строку в структуру CodedLink: %w", err)
+	}
+
+	return &result, nil
+}
+
+func (codedLink *CodedLink) ToJSON() ([]byte, error) {
+	return json.Marshal(codedLink)
+}
+
 func reverse(s string) string {
 	size := len(s)
 	buf := make([]byte, size)
