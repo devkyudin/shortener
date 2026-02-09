@@ -67,8 +67,8 @@ func (lr *CodedLinksRepository) LoadFromFile() error {
 		}
 
 		lr.idsMap[codedLink.UUID] = codedLink
-		lr.shortUrlsMap[codedLink.ShortUrl] = codedLink
-		lr.originalUrlsMap[codedLink.OriginalUrl] = codedLink
+		lr.shortUrlsMap[codedLink.ShortURL] = codedLink
+		lr.originalUrlsMap[codedLink.OriginalURL] = codedLink
 
 		if codedLink.UUID >= lr.nextID {
 			lr.nextID = codedLink.UUID + 1
@@ -95,13 +95,13 @@ func (lr *CodedLinksRepository) Close() error {
 func (lr *CodedLinksRepository) CreateCodedLink(codedLink *model.CodedLink) error {
 	lr.rwMutex.Lock()
 	defer lr.rwMutex.Unlock()
-	if _, isOk := lr.shortUrlsMap[codedLink.OriginalUrl]; isOk {
+	if _, isOk := lr.shortUrlsMap[codedLink.OriginalURL]; isOk {
 		return nil
 	}
 
 	lr.idsMap[codedLink.UUID] = codedLink
-	lr.shortUrlsMap[codedLink.ShortUrl] = codedLink
-	lr.originalUrlsMap[codedLink.OriginalUrl] = codedLink
+	lr.shortUrlsMap[codedLink.ShortURL] = codedLink
+	lr.originalUrlsMap[codedLink.OriginalURL] = codedLink
 	line, err := codedLink.ToJSON()
 	if err != nil {
 		return errors.New("не удалось сериализовать структуру CodedLink в строку для записи в файл: " + err.Error())
@@ -130,14 +130,14 @@ func (lr *CodedLinksRepository) GetByID(id int) (link *model.CodedLink, isOk boo
 	return result, isOk
 }
 
-func (lr *CodedLinksRepository) GetByShortUrl(shortLink string) (link *model.CodedLink, isOk bool) {
+func (lr *CodedLinksRepository) GetByShortURL(shortLink string) (link *model.CodedLink, isOk bool) {
 	lr.rwMutex.RLock()
 	defer lr.rwMutex.RUnlock()
 	result, isOk := lr.shortUrlsMap[shortLink]
 	return result, isOk
 }
 
-func (lr *CodedLinksRepository) GetByOriginalUrl(originalLink string) (link *model.CodedLink, isOk bool) {
+func (lr *CodedLinksRepository) GetByOriginalURL(originalLink string) (link *model.CodedLink, isOk bool) {
 	lr.rwMutex.RLock()
 	defer lr.rwMutex.RUnlock()
 	result, isOk := lr.originalUrlsMap[originalLink]

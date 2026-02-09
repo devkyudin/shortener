@@ -25,29 +25,29 @@ func NewURLService(alphabet *model.Alphabet, linksRepository *repository.CodedLi
 	}
 }
 
-func (s *URLService) CreateShortLink(originalUrl string) (string, error) {
+func (s *URLService) CreateShortLink(originalURL string) (string, error) {
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
-	codedLink, isOk := s.linksRepository.GetByOriginalUrl(originalUrl)
+	codedLink, isOk := s.linksRepository.GetByOriginalURL(originalURL)
 	if isOk {
-		return s.cfg.ShortLinkAddress.String() + codedLink.ShortUrl, nil
+		return s.cfg.ShortLinkAddress.String() + codedLink.ShortURL, nil
 	}
 
 	id := s.linksRepository.GetUniqueID()
-	codedLink = model.NewCodedLink(id, originalUrl, s.alphabet)
+	codedLink = model.NewCodedLink(id, originalURL, s.alphabet)
 	err := s.linksRepository.CreateCodedLink(codedLink)
 	if err != nil {
 		return "", errors.New("не удалось сохранить ссылку: " + err.Error())
 	}
-	shortedLink := s.cfg.ShortLinkAddress.String() + codedLink.ShortUrl
+	shortedLink := s.cfg.ShortLinkAddress.String() + codedLink.ShortURL
 	return shortedLink, nil
 }
 
-func (s *URLService) GetFullLink(shortUrl string) (string, error) {
-	codedLink, ok := s.linksRepository.GetByShortUrl(shortUrl)
+func (s *URLService) GetFullLink(shortURL string) (string, error) {
+	codedLink, ok := s.linksRepository.GetByShortURL(shortURL)
 	if !ok {
 		return "", errors.New(`нет ссылки с таким идентификатором идентификатором`)
 	}
 
-	return codedLink.OriginalUrl, nil
+	return codedLink.OriginalURL, nil
 }

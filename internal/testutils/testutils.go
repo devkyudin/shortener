@@ -39,8 +39,8 @@ func TestRequest(t *testing.T, ts *httptest.Server, req Req) (*http.Response, st
 	return res, string(resp)
 }
 
-func CreateShortLinkSafe(s *service.URLService, originalUrl string) string {
-	result, err := s.CreateShortLink(originalUrl)
+func CreateShortLinkSafe(s *service.URLService, originalURL string) string {
+	result, err := s.CreateShortLink(originalURL)
 	if err != nil {
 		panic("Failed to create short link: " + err.Error())
 	}

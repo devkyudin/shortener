@@ -8,8 +8,8 @@ import (
 
 type CodedLink struct {
 	UUID        int    `json:"uuid"`
-	ShortUrl    string `json:"short_url"`
-	OriginalUrl string `json:"original_url"`
+	ShortURL    string `json:"short_url"`
+	OriginalURL string `json:"original_url"`
 }
 
 func NewCodedLink(id int, originalUrl string, alphabet *Alphabet) *CodedLink {
@@ -26,8 +26,8 @@ func NewCodedLink(id int, originalUrl string, alphabet *Alphabet) *CodedLink {
 
 	return &CodedLink{
 		UUID:        originalID,
-		ShortUrl:    shortUrl,
-		OriginalUrl: originalUrl,
+		ShortURL:    shortUrl,
+		OriginalURL: originalUrl,
 	}
 }
 
