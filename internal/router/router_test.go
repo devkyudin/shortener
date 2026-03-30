@@ -17,7 +17,46 @@ func TestShortenerRouter(t *testing.T) {
 		want testutils.Want
 	}{
 		{
-			name: "Shorten: Bad request empty body",
+			name: "Shorten JSON: Bad request empty body",
+			req: testutils.Req{
+				URL:         "/api/shorten",
+				MethodName:  "POST",
+				ContentType: "application/json",
+				Body:        "{}",
+			},
+			want: testutils.Want{
+				Status: 400,
+				Body:   "",
+			},
+		},
+		{
+			name: "Shorten JSON: Bad request wrong content type",
+			req: testutils.Req{
+				URL:         "/api/shorten",
+				MethodName:  "POST",
+				ContentType: "text/plain",
+				Body:        `{"url":"https://example.com"}`,
+			},
+			want: testutils.Want{
+				Status: 400,
+				Body:   "",
+			},
+		},
+		{
+			name: "Shorten JSON: Created short link",
+			req: testutils.Req{
+				URL:         "/api/shorten",
+				MethodName:  "POST",
+				ContentType: "application/json",
+				Body:        `{"url":"https://some-new-example.com"}`,
+			},
+			want: testutils.Want{
+				Status: 201,
+				Body:   `{"result":"` + deps.URLService.CreateShortLink("https://example.com") + `"}` + "\n",
+			},
+		},
+		{
+			name: "Shorten PlainText: Bad request empty body",
 			req: testutils.Req{
 				URL:         "/",
 				MethodName:  "POST",
@@ -30,7 +69,7 @@ func TestShortenerRouter(t *testing.T) {
 			},
 		},
 		{
-			name: "Shorten: Bad request wrong content type",
+			name: "Shorten PlainText: Bad request wrong content type",
 			req: testutils.Req{
 				URL:         "/",
 				MethodName:  "POST",
@@ -43,7 +82,7 @@ func TestShortenerRouter(t *testing.T) {
 			},
 		},
 		{
-			name: "Shorten: Bad request wrong method",
+			name: "Shorten PlainText: Bad request wrong method",
 			req: testutils.Req{
 				URL:         "/",
 				MethodName:  "GET",
@@ -56,7 +95,7 @@ func TestShortenerRouter(t *testing.T) {
 			},
 		},
 		{
-			name: "Shorten: Created short link",
+			name: "Shorten PlainText: Created short link",
 			req: testutils.Req{
 				URL:         "/",
 				MethodName:  "POST",
