@@ -10,13 +10,13 @@ import (
 )
 
 type URLService struct {
-	linksRepository *repository.CodedLinksRepository
+	linksRepository *repository.CodedLinksFileRepository
 	alphabet        *model.Alphabet
 	cfg             *config.Config
 	mutex           *sync.Mutex
 }
 
-func NewURLService(alphabet *model.Alphabet, linksRepository *repository.CodedLinksRepository, cfg *config.Config) *URLService {
+func NewURLService(alphabet *model.Alphabet, linksRepository *repository.CodedLinksFileRepository, cfg *config.Config) *URLService {
 	return &URLService{
 		linksRepository: linksRepository,
 		alphabet:        alphabet,

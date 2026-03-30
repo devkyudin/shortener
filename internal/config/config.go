@@ -12,6 +12,7 @@ type Config struct {
 	ServerRunAddress *NetAddress
 	ShortLinkAddress *NetAddress
 	FileStoragePath  *string
+	ConnectionString *string
 }
 
 type NetAddress struct {
@@ -62,10 +63,13 @@ var defaultShortLinkAddress = &NetAddress{
 
 var defaultFileStoragePath = "/tmp/shortener_data.json"
 
+var defaultConnectionString = "file:test.db?cache=shared&mode=memory"
+
 var cfg = &Config{
 	ServerRunAddress: defaultServerRunAddress,
 	ShortLinkAddress: defaultShortLinkAddress,
 	FileStoragePath:  &defaultFileStoragePath,
+	ConnectionString: &defaultConnectionString,
 }
 
 func GetConfig() *Config {
@@ -82,6 +86,11 @@ func GetConfig() *Config {
 	if fileStoragePath := os.Getenv("FILE_STORAGE_PATH"); fileStoragePath != "" {
 		cfg.FileStoragePath = &fileStoragePath
 	}
+
+	if connectionString := os.Getenv("DATABASE_DSN"); connectionString != "" {
+		cfg.ConnectionString = &connectionString
+	}
+
 	return cfg
 }
 
@@ -89,5 +98,6 @@ func setConfigByFlags() {
 	flag.Var(cfg.ServerRunAddress, "a", "address to run the server on in format ip:port")
 	flag.Var(cfg.ShortLinkAddress, "b", "default address for short links in format http(s)://ip:port/")
 	flag.StringVar(cfg.FileStoragePath, "f", defaultFileStoragePath, "path to file for storing data")
+	flag.StringVar(cfg.ConnectionString, "d", defaultConnectionString, "connection string for database")
 	flag.Parse()
 }
