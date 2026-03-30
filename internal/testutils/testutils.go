@@ -7,6 +7,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/devkyudin/shortener/internal/service"
 	"github.com/stretchr/testify/require"
 )
 
@@ -36,4 +37,13 @@ func TestRequest(t *testing.T, ts *httptest.Server, req Req) (*http.Response, st
 	resp, err := io.ReadAll(res.Body)
 	require.NoError(t, err)
 	return res, string(resp)
+}
+
+func CreateShortLinkSafe(s *service.URLService, originalURL string) string {
+	result, err := s.CreateShortLink(originalURL)
+	if err != nil {
+		panic("Failed to create short link: " + err.Error())
+	}
+
+	return result
 }

@@ -8,7 +8,7 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func GetRouter(shp *shortenplaintext.ShortenPlainTextHandler, shj *shortenjson.ShortenJSONHandler, gl *getlink.GetLinkHandler, lm *middleware.LoggingMiddleware, cm *middleware.CompressionMiddleware) chi.Router {
+func GetRouter(shp *shortenplaintext.ShortenPlainTextHandler, shj *shortenjson.ShortenJSONHandler, gl *getlink.GetLinkHandler, lm *middleware.LoggingMiddleware, cm *middleware.CompressionMiddleware) *chi.Router {
 	r := chi.NewRouter()
 	generalRouter := r.With(lm.WithLogging).With(cm.WithCompression)
 	generalRouter.With(
@@ -20,5 +20,6 @@ func GetRouter(shp *shortenplaintext.ShortenPlainTextHandler, shj *shortenjson.S
 	).Post("/api/shorten", shj.Shorten)
 
 	generalRouter.Get(`/{id}`, gl.GetLink)
-	return r
+	result := chi.Router(r)
+	return &result
 }

@@ -25,11 +25,11 @@ func TestShorten(t *testing.T) {
 				URL:         "/",
 				MethodName:  "POST",
 				ContentType: "text/plain",
-				Body:        "https://example.com",
+				Body:        "https://rand-example.com",
 			},
 			want: testutils.Want{
 				Status:      http.StatusCreated,
-				Body:        deps.URLService.CreateShortLink("https://example.com"),
+				Body:        testutils.CreateShortLinkSafe(deps.URLService, "https://rand-example.com"),
 				ContentType: "text/plain",
 			},
 		},
@@ -76,7 +76,7 @@ func TestShorten(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			res, body := testutils.TestRequest(t, httptest.NewServer(deps.Router), tt.req)
+			res, body := testutils.TestRequest(t, httptest.NewServer(*deps.Router), tt.req)
 			defer res.Body.Close()
 			assert.Equal(t, tt.want.Status, res.StatusCode)
 			assert.Equal(t, tt.want.ContentType, res.Header.Get("Content-Type"))

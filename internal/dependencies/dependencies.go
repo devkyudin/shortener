@@ -7,6 +7,7 @@ import (
 	"github.com/devkyudin/shortener/internal/handler/shortenplaintext"
 	"github.com/devkyudin/shortener/internal/logger"
 	"github.com/devkyudin/shortener/internal/middleware"
+	"github.com/devkyudin/shortener/internal/model"
 	"github.com/devkyudin/shortener/internal/repository"
 	shortener_router2 "github.com/devkyudin/shortener/internal/router"
 	"github.com/devkyudin/shortener/internal/service"
@@ -14,35 +15,40 @@ import (
 )
 
 type Dependencies struct {
-	LinksRepository         repository.LinksRepository
-	Config                  config.Config
-	URLService              service.URLService
-	GetLinkHandler          getlink.GetLinkHandler
-	ShortenPlainTextHandler shortenplaintext.ShortenPlainTextHandler
-	ShortenJSONHandler      shortenjson.ShortenJSONHandler
-	Router                  chi.Router
-	LogContainer            logger.Container
+	LinksRepository         *repository.CodedLinksRepository
+	Config                  *config.Config
+	URLService              *service.URLService
+	GetLinkHandler          *getlink.GetLinkHandler
+	ShortenPlainTextHandler *shortenplaintext.ShortenPlainTextHandler
+	ShortenJSONHandler      *shortenjson.ShortenJSONHandler
+	Router                  *chi.Router
+	LogContainer            *logger.Container
 }
 
 func GetDependencies() *Dependencies {
 	cfg := config.GetConfig()
-	lr := repository.NewLinksRepository()
-	s := service.NewURLService(lr, cfg)
-	glh := getlink.NewGetLinkHandler(s)
-	shp := shortenplaintext.NewShortenPlainTextHandler(s)
-	shj := shortenjson.NewShortenJSONHandler(s)
 	logContainer := logger.NewLoggerContainer()
-	lm := middleware.NewLoggingMiddleware(logContainer)
-	ch := middleware.NewCompressionMiddleware(logContainer, map[string]struct{}{"text/plain": {}, "application/json": {}})
-	router := shortener_router2.GetRouter(shp, shj, glh, lm, ch)
+	alphabet := model.NewAlphabet([]rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"))
+	linksRepository, err := repository.NewCodedLinksRepository(cfg)
+	if err != nil {
+		logContainer.Logger.Error("ошибка при инициализации репозитория", "err", err)
+		panic(err)
+	}
+	urlService := service.NewURLService(alphabet, linksRepository, cfg)
+	getLinkHandler := getlink.NewGetLinkHandler(urlService)
+	shortenPlainTextHandler := shortenplaintext.NewShortenPlainTextHandler(urlService)
+	shortenJSONHandler := shortenjson.NewShortenJSONHandler(urlService)
+	loggingMiddleware := middleware.NewLoggingMiddleware(logContainer)
+	compressionMiddleware := middleware.NewCompressionMiddleware(logContainer, map[string]struct{}{"text/plain": {}, "application/json": {}})
+	router := shortener_router2.GetRouter(shortenPlainTextHandler, shortenJSONHandler, getLinkHandler, loggingMiddleware, compressionMiddleware)
 	return &Dependencies{
-		LinksRepository:         *lr,
-		Config:                  *cfg,
-		URLService:              *s,
-		GetLinkHandler:          *glh,
-		ShortenPlainTextHandler: *shp,
-		ShortenJSONHandler:      *shj,
+		LinksRepository:         linksRepository,
+		Config:                  cfg,
+		URLService:              urlService,
+		GetLinkHandler:          getLinkHandler,
+		ShortenPlainTextHandler: shortenPlainTextHandler,
+		ShortenJSONHandler:      shortenJSONHandler,
 		Router:                  router,
-		LogContainer:            *logContainer,
+		LogContainer:            logContainer,
 	}
 }

@@ -31,7 +31,10 @@ func (h *ShortenJSONHandler) Shorten(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	shortedLink := h.s.CreateShortLink(bodyRequest.URL)
+	shortedLink, err := h.s.CreateShortLink(bodyRequest.URL)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+	}
 
 	w.Header().Add(`Content-Type`, `application/json`)
 	w.WriteHeader(http.StatusCreated)

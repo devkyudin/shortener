@@ -11,6 +11,7 @@ import (
 type Config struct {
 	ServerRunAddress *NetAddress
 	ShortLinkAddress *NetAddress
+	FileStoragePath  *string
 }
 
 type NetAddress struct {
@@ -59,9 +60,12 @@ var defaultShortLinkAddress = &NetAddress{
 	Port:     "8080",
 }
 
+var defaultFileStoragePath = "/tmp/shortener_data.json"
+
 var cfg = &Config{
 	ServerRunAddress: defaultServerRunAddress,
 	ShortLinkAddress: defaultShortLinkAddress,
+	FileStoragePath:  &defaultFileStoragePath,
 }
 
 func GetConfig() *Config {
@@ -74,11 +78,16 @@ func GetConfig() *Config {
 	if shortLinkAddress := os.Getenv("BASE_URL"); shortLinkAddress != "" {
 		_ = cfg.ShortLinkAddress.Set(shortLinkAddress)
 	}
+
+	if fileStoragePath := os.Getenv("FILE_STORAGE_PATH"); fileStoragePath != "" {
+		cfg.FileStoragePath = &fileStoragePath
+	}
 	return cfg
 }
 
 func setConfigByFlags() {
 	flag.Var(cfg.ServerRunAddress, "a", "address to run the server on in format ip:port")
 	flag.Var(cfg.ShortLinkAddress, "b", "default address for short links in format http(s)://ip:port/")
+	flag.StringVar(cfg.FileStoragePath, "f", defaultFileStoragePath, "path to file for storing data")
 	flag.Parse()
 }

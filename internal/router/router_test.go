@@ -52,7 +52,7 @@ func TestShortenerRouter(t *testing.T) {
 			},
 			want: testutils.Want{
 				Status: 201,
-				Body:   `{"result":"` + deps.URLService.CreateShortLink("https://example.com") + `"}` + "\n",
+				Body:   `{"result":"` + testutils.CreateShortLinkSafe(deps.URLService, "https://some-new-example.com") + `"}` + "\n",
 			},
 		},
 		{
@@ -104,7 +104,7 @@ func TestShortenerRouter(t *testing.T) {
 			},
 			want: testutils.Want{
 				Status: 201,
-				Body:   deps.URLService.CreateShortLink("https://example.com"),
+				Body:   testutils.CreateShortLinkSafe(deps.URLService, "https://example.com"),
 			},
 		},
 		{
@@ -149,7 +149,7 @@ func TestShortenerRouter(t *testing.T) {
 		{
 			name: "GetLink: Temporary redirect for existing id",
 			req: testutils.Req{
-				URL:         "/" + deps.URLService.CreateShortLink("https://example.com")[len("http://localhost:8080/"):],
+				URL:         "/" + testutils.CreateShortLinkSafe(deps.URLService, "https://example.com")[len("http://localhost:8080/"):],
 				MethodName:  "GET",
 				ContentType: "text/plain",
 				Body:        "",
@@ -162,7 +162,7 @@ func TestShortenerRouter(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			resp, get := testutils.TestRequest(t, httptest.NewServer(deps.Router), tt.req)
+			resp, get := testutils.TestRequest(t, httptest.NewServer(*deps.Router), tt.req)
 			defer resp.Body.Close()
 			assert.Equal(t, tt.want.Status, resp.StatusCode)
 			assert.Equal(t, tt.want.Body, get)
