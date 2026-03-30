@@ -53,11 +53,12 @@ func (m *LoggingMiddleware) WithLogging(next http.Handler) http.Handler {
 		uriAttr := slog.Attr{Key: "RequestURI", Value: slog.StringValue(r.RequestURI)}
 		methodAttr := slog.Attr{Key: "Method", Value: slog.StringValue(r.Method)}
 		durationAttr := slog.Attr{Key: "Duration", Value: slog.StringValue(time.Since(start).String())}
+		contentTypeAttr := slog.Attr{Key: "ContentType", Value: slog.StringValue(r.Header.Get("Content-Type"))}
 
 		statusCodeAttr := slog.Attr{Key: "StatusCode", Value: slog.IntValue(lw.data.statusCode)}
 		sizeAttr := slog.Attr{Key: "ResponseSize", Value: slog.IntValue(lw.data.size)}
 		m.logContainer.Logger.Log(r.Context(), slog.LevelInfo, "HTTP Request", uriAttr, methodAttr, durationAttr)
-		m.logContainer.Logger.Log(r.Context(), slog.LevelInfo, "HTTP Response", statusCodeAttr, sizeAttr)
+		m.logContainer.Logger.Log(r.Context(), slog.LevelInfo, "HTTP Response", statusCodeAttr, sizeAttr, contentTypeAttr)
 	}
 
 	return http.HandlerFunc(logFn)
