@@ -34,7 +34,7 @@ func (r *CodedLinksDbRepository) Close() error {
 
 func (r *CodedLinksDbRepository) Ping(ctx context.Context) error {
 	if err := r.db.PingContext(ctx); err != nil {
-		r.log.Logger.ErrorContext(ctx, "Ошибка во время пинга БД", err)
+		r.log.Logger.ErrorContext(ctx, "Ошибка во время пинга БД", err.Error())
 		return err
 	}
 
