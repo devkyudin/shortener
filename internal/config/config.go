@@ -63,7 +63,7 @@ var defaultShortLinkAddress = &NetAddress{
 
 var defaultFileStoragePath = "/tmp/shortener_data.json"
 
-var defaultConnectionString = "file:test.db?cache=shared&mode=memory"
+var defaultConnectionString = "postgres://postgres:postgres@localhost:5432/postgres"
 
 var cfg = &Config{
 	ServerRunAddress: defaultServerRunAddress,
